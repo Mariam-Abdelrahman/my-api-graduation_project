@@ -12,6 +12,16 @@ from pymongo import MongoClient
 from pydantic import BaseModel
 import datetime
 from langdetect import detect
+from dotenv import load_dotenv  # استيراد مكتبة python-dotenv
+
+# تحميل متغيرات البيئة من ملف .env
+load_dotenv()
+
+# إعدادات الاتصال بـ MongoDB
+DB_URL = os.getenv("DB_URL")  # قراءة DB_URL من .env
+client = MongoClient(DB_URL)
+db = client["StellaLearnDB"]
+collection = db["transcriptions"]
 
 # تعريف Middleware
 middleware = [Middleware(GZipMiddleware, minimum_size=1000)]
@@ -33,12 +43,6 @@ def convert_mp4_to_wav(mp4_path: str, wav_path: str):
         '-y'
     ]
     subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-# إعدادات الاتصال بـ MongoDB
-DB_URL = 'mongodb+srv://Stella-Learn-Platform:EsraaFouda123@cluster0.0eylr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
-client = MongoClient(DB_URL)
-db = client["StellaLearnDB"]  
-collection = db["transcriptions"]
 
 try:
     client.admin.command('ping')
